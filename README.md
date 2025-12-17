@@ -3,8 +3,10 @@
 Automated workflow for downloading Spotify playlists, converting them to Red Book standard WAV, and burning them to CD using ImgBurn.
 
 ## Features
-- **Batch Processing**: Queue multiple playlists and customers.
+- **Batch Processing**: Queue multiple playlists.
 - **Auto-Download**: Uses `spotdl` to fetch audio.
+- **Smart Retry**: Automatically retries failed downloads.
+- **Integrity Check**: Verifies audio duration against metadata to ensure correct tracks.
 - **Format Conversion**: Converts audio to 44.1kHz/16-bit WAV (CD Standard).
 - **CUE Sheet Generation**: Creates metadata for CD-TEXT (Artist/Title on car displays).
 - **Tracklist Generation**: Creates a text file for CD case inserts.
@@ -40,13 +42,13 @@ Automated workflow for downloading Spotify playlists, converting them to Red Boo
    python spotify2cd.py
    ```
 2. Enter Spotify Playlist Link (script checks duration automatically).
-3. Enter Customer Name.
-4. Repeat for multiple orders or press Enter on an empty link to proceed.
-5. The script will download and convert all orders.
+3. Enter CD Name.
+4. Repeat for multiple playlists or press Enter on an empty link to proceed.
+5. The script will download and convert all playlists.
 6. Insert blank CDs when prompted to burn.
 
 ## Output
-For each order, a folder is created in the `cd` directory containing:
+For each playlist, a folder is created in the `cd` directory containing:
 - Converted WAV files
 - `burn_plan.cue` (for ImgBurn)
 - `tracklist.txt` (for printing)
