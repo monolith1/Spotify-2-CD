@@ -14,6 +14,7 @@ Automated workflow for downloading Spotify playlists, converting them to Red Boo
 - Python 3.x
 - FFmpeg (Must be added to System PATH)
 - ImgBurn
+- **macOS Users**: `cdrdao` (via Homebrew)
 
 ## Installation
 
@@ -21,6 +22,8 @@ Automated workflow for downloading Spotify playlists, converting them to Red Boo
    ```bash
    pip install spotdl pydub
    ```
+
+   **macOS**: Install system tools: `brew install ffmpeg cdrdao`
 
 2. Configuration:
    - Ensure `ImgBurn.exe` is at `C:\Program Files (x86)\ImgBurn\ImgBurn.exe` or update `IMGBURN_PATH` in the script.

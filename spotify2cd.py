@@ -5,6 +5,7 @@ import time
 import json
 from pathlib import Path
 from pydub import AudioSegment
+import platform
 
 # --- CONFIGURATION ---
 # Path to ImgBurn executable
@@ -220,6 +221,36 @@ def generate_tracklist(folder_path, customer_name):
 def burn_disc(cue_file_path):
     print(f"\n[4/5] Launching ImgBurn...")
     
+    if platform.system() == "Darwin":
+        # macOS Logic using cdrdao
+        try:
+            # Check if cdrdao is installed
+            subprocess.run(["cdrdao", "--version"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except FileNotFoundError:
+            print("[-] 'cdrdao' not found. Please install it via Homebrew:")
+            print("    brew install cdrdao")
+            return
+
+        cue_path = Path(cue_file_path)
+        cwd = cue_path.parent
+        
+        # Parse speed (e.g., "8x" -> "8")
+        speed = BURN_SPEED.lower().replace("x", "")
+        speed_args = [] if speed == "max" else ["--speed", speed]
+
+        # cdrdao command for macOS
+        # --driver generic-mmc: Standard for most modern USB/SATA drives
+        # --device IOCompactDiscServices: Auto-detects the first optical drive on macOS
+        cmd = ["cdrdao", "write", "--eject", "--driver", "generic-mmc", "--device", "IOCompactDiscServices"] + speed_args + [cue_path.name]
+        
+        print(f"Running: {' '.join(cmd)}")
+        try:
+            subprocess.run(cmd, cwd=cwd, check=True)
+            print("\n[5/5] Burning Complete! Disc ejected.")
+        except subprocess.CalledProcessError:
+            print("\nBurning Failed. Ensure a blank CD is inserted.")
+        return
+
     if not os.path.exists(IMGBURN_PATH):
         print(f"ERROR: ImgBurn not found at {IMGBURN_PATH}")
         print("Please install it or fix the path in the script.")
