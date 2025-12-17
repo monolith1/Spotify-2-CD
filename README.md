@@ -23,17 +23,21 @@ Automated workflow for downloading Spotify playlists, converting them to Red Boo
    pip install spotdl pydub
    ```
 
+   **Windows**:
+   - Install FFmpeg: `winget install Gyan.FFmpeg`
+   - Ensure ImgBurn is installed.
+
    **macOS**: Install system tools: `brew install ffmpeg cdrdao`
 
 2. Configuration:
    - Ensure `ImgBurn.exe` is at `C:\Program Files (x86)\ImgBurn\ImgBurn.exe` or update `IMGBURN_PATH` in the script.
-   - Output directory is set to `C:\Users\monol\wkdir\monosound\cd`.
+   - Output directory is the `cd` folder in the script's location.
 
 ## Usage
 
 1. Run the script:
    ```bash
-   python mono_auto.py
+   python spotify2cd.py
    ```
 2. Enter Spotify Playlist Link (script checks duration automatically).
 3. Enter Customer Name.
