@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 from pydub import AudioSegment
 import platform
+import unicodedata
 
 # --- CONFIGURATION ---
 # Path to ImgBurn executable
@@ -190,8 +191,18 @@ def convert_to_wav(folder_path):
     for file_path in sorted(folder.iterdir()):
         if file_path.is_file() and file_path.suffix.lower() in supported_ext:
             if file_path.suffix.lower() == '.wav':
-                # Already WAV? Just verify quality if needed, or skip.
-                wav_files.append(file_path)
+                # Already WAV? Ensure filename is safe.
+                original_stem = file_path.stem
+                safe_stem = unicodedata.normalize('NFKD', original_stem).encode('ascii', 'ignore').decode('ascii')
+                safe_stem = re.sub(r'["]', '', safe_stem).strip()
+                
+                if original_stem != safe_stem:
+                    new_path = file_path.with_name(safe_stem).with_suffix('.wav')
+                    os.rename(file_path, new_path)
+                    wav_files.append(new_path)
+                    print(f"  Renamed: {file_path.name} -> {new_path.name}")
+                else:
+                    wav_files.append(file_path)
                 continue
                 
             try:
@@ -202,13 +213,18 @@ def convert_to_wav(folder_path):
                 audio = audio.set_sample_width(2) # 16-bit
                 audio = audio.set_channels(2)
                 
-                target_filename = file_path.with_suffix('.wav')
+                # Sanitize filename for ImgBurn compatibility (ASCII only)
+                original_stem = file_path.stem
+                safe_stem = unicodedata.normalize('NFKD', original_stem).encode('ascii', 'ignore').decode('ascii')
+                safe_stem = re.sub(r'["]', '', safe_stem).strip()
+                
+                target_filename = file_path.with_name(safe_stem).with_suffix('.wav')
                 audio.export(str(target_filename), format="wav")
                 
                 # Delete original
                 os.remove(file_path)
                 wav_files.append(target_filename)
-                print(f"  Converted: {file_path.name}")
+                print(f"  Converted: {file_path.name} -> {target_filename.name}")
                 
             except Exception as e:
                 print(f"  Failed: {file_path.name} ({e})")
