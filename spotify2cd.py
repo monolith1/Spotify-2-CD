@@ -108,9 +108,12 @@ def download_playlist(link, output_folder):
     if expected_count > 0:
         print(f"  [...] Expecting {expected_count} tracks.")
 
+    # Use {track-number} for albums to preserve original index, {list-position} for playlists
+    numbering_tag = "{track-number}" if "album" in link.lower() else "{list-position}"
+
     cmd = [
         "spotdl", link, 
-        "--output", f"{output_folder}/{{list-position}} {{artist}} - {{title}}.{{output-ext}}"
+        "--output", f"{output_folder}/{numbering_tag} {{artist}} - {{title}}.{{output-ext}}"
     ]
     
     max_retries = 3
